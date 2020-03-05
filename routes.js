@@ -1,0 +1,127 @@
+const express = require("express");
+const axios = require("axios").default;
+const urls = require("./resources/urls");
+const { refreshAccessToken } = require("./resources/utils");
+const qs = require("querystring");
+const router = express.Router();
+
+router.post("/logistive/payments/initiate", async (req, res) => {
+  const response = await axios.post(
+    `https://easypay.easypaisa.com.pk/easypay/Index.jsf`,
+    qs.stringify({
+      storeId: "9813",
+      amount: "10",
+      postBackURL: `http://localhost:5000/api/payments/firstHandler`,
+      orderRefNum: "1101",
+      autoRedirect: "1"
+    }),
+    {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      }
+    }
+  );
+
+  res.json({ ...response.data });
+});
+
+router.get("/logistive/payments/firstHandler", (req, res) => {
+  const { auth_token, postBackURL } = req.query;
+  res.json({ success: true, auth_token, postBackURL });
+});
+
+router.get("/logistive/payments/secondHandler", (req, res) => {
+  const { status, desc, orderRefNumber } = req.query;
+
+  res.json({ status, desc, orderRefNumber });
+});
+
+router.post("/logistive/leads", async (req, res) => {
+  const {
+    email,
+    name,
+    phone,
+    movingFrom,
+    movingTo,
+    jobDate,
+    package
+  } = req.body;
+  const { token_type, access_token } = await refreshAccessToken();
+  console.log(req.body);
+  try {
+    const response = await axios.post(
+      urls.AddLeadUrl,
+      {
+        data: [
+          {
+            Last_Name: name,
+            Email: email,
+            Phone: phone,
+            Moving_to_City: movingTo,
+            Current_City: movingFrom,
+            Estimated_Job_Date: jobDate,
+            Lead_Source: "Website Logistive.pk",
+            Lead_Status: "New Lead",
+            Type_of_Truck: package
+          }
+        ],
+        trigger: []
+      },
+      {
+        headers: {
+          Authorization: `${token_type} ${access_token}`
+        }
+      }
+    );
+    const repsonseMessage =
+      response.data.data[0].code == "SUCCESS" ? true : false;
+
+    res.json({
+      id: response.data.data[0].details.id,
+      success: repsonseMessage
+    });
+  } catch (error) {
+    console.log(error);
+    res.json(error);
+  }
+});
+
+router.post("/movonics/leads", async (req, res) => {
+  try {
+    const { token_type, access_token } = await refreshAccessToken("movonics");
+    console.log(access_token);
+    console.log(req.body);
+
+    const response = await axios.post(
+      urls.AddLeadUrl,
+      {
+        data: [
+          {
+            ...req.body,
+            Lead_Source: "Website",
+            Lead_Status: "New Lead"
+          }
+        ],
+        trigger: []
+      },
+      {
+        headers: {
+          Authorization: `${token_type} ${access_token}`
+        }
+      }
+    );
+    console.log(response.data);
+
+    const repsonseMessage =
+      response.data.data[0].code == "SUCCESS" ? true : false;
+
+    res.json({
+      id: response.data.data[0].details.id,
+      success: repsonseMessage
+    });
+  } catch (error) {
+    console.log(error);
+    res.json(error);
+  }
+});
+module.exports = router;
