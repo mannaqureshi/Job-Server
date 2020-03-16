@@ -5,6 +5,10 @@ const { refreshAccessToken } = require("./resources/utils");
 const qs = require("querystring");
 const router = express.Router();
 
+router.get("/", (req, res) => {
+  res.send("<h1>Logistive | Movonics</h1>");
+});
+
 router.post("/logistive/payments/initiate", async (req, res) => {
   const response = await axios.post(
     `https://easypay.easypaisa.com.pk/easypay/Index.jsf`,
