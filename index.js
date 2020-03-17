@@ -27,6 +27,7 @@ app.listen(PORT, async () => {
       storage,
       JSON.stringify({
         // logistive: logistiveCredentials || {},
+
         movonics: movonicsCredentials
       })
     );
