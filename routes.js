@@ -102,7 +102,6 @@ router.post("/movonics/leads", async (req, res) => {
         data: [
           {
             ...req.body,
-            Lead_Source: "Website",
             Lead_Status: "New Lead"
           }
         ],
