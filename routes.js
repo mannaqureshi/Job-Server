@@ -68,8 +68,7 @@ router.post("/logistive/leads", async (req, res) => {
             Lead_Status: "New Lead",
             Type_of_Truck: package
           }
-        ],
-        trigger: []
+        ]
       },
       {
         headers: {
@@ -104,8 +103,7 @@ router.post("/movonics/leads", async (req, res) => {
             ...req.body,
             Lead_Status: "New Lead"
           }
-        ],
-        trigger: []
+        ]
       },
       {
         headers: {
