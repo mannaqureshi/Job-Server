@@ -127,8 +127,8 @@ router.post("/movonics/leads", async (req, res) => {
 });
 
 router.post("/movonics/unbounce", async (req, res) => {
-  req.body.pageVariant = undefined;
-  req.body.pageId = undefined;
+  delete req.body.pageVariant;
+  delete req.body.pageId;
   console.log(req.body);
   return;
   try {
