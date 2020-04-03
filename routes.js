@@ -127,10 +127,14 @@ router.post("/movonics/leads", async (req, res) => {
 });
 
 router.post("/movonics/unbounce", async (req, res) => {
+  req.body.pageVariant = undefined;
+  req.body.pageId = undefined;
+  console.log(req.body);
+  return;
   try {
     const { token_type, access_token } = await refreshAccessToken("movonics");
     console.log(access_token);
-    console.log(req.body);
+
     req.body.pageVariant = undefined;
     req.body.pageId = undefined;
     console.log(req.body);
