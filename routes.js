@@ -17,12 +17,12 @@ router.post("/logistive/payments/initiate", async (req, res) => {
       amount: "10",
       postBackURL: `http://localhost:5000/api/payments/firstHandler`,
       orderRefNum: "1101",
-      autoRedirect: "1"
+      autoRedirect: "1",
     }),
     {
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      }
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
     }
   );
 
@@ -48,7 +48,7 @@ router.post("/logistive/leads", async (req, res) => {
     movingFrom,
     movingTo,
     jobDate,
-    package
+    package,
   } = req.body;
   const { token_type, access_token } = await refreshAccessToken();
   console.log(req.body);
@@ -66,14 +66,14 @@ router.post("/logistive/leads", async (req, res) => {
             Estimated_Job_Date: jobDate,
             Lead_Source: "Website Logistive.pk",
             Lead_Status: "New Lead",
-            Type_of_Truck: package
-          }
-        ]
+            Type_of_Truck: package,
+          },
+        ],
       },
       {
         headers: {
-          Authorization: `${token_type} ${access_token}`
-        }
+          Authorization: `${token_type} ${access_token}`,
+        },
       }
     );
     const repsonseMessage =
@@ -81,7 +81,7 @@ router.post("/logistive/leads", async (req, res) => {
 
     res.json({
       id: response.data.data[0].details.id,
-      success: repsonseMessage
+      success: repsonseMessage,
     });
   } catch (error) {
     console.log(error);
@@ -101,14 +101,14 @@ router.post("/movonics/leads", async (req, res) => {
         data: [
           {
             ...req.body,
-            Lead_Status: "New Lead"
-          }
-        ]
+            Lead_Status: "New Lead",
+          },
+        ],
       },
       {
         headers: {
-          Authorization: `${token_type} ${access_token}`
-        }
+          Authorization: `${token_type} ${access_token}`,
+        },
       }
     );
     console.log(response.data);
@@ -118,8 +118,45 @@ router.post("/movonics/leads", async (req, res) => {
 
     res.json({
       id: response.data.data[0].details.id,
-      success: repsonseMessage
+      success: repsonseMessage,
     });
+  } catch (error) {
+    console.log(error);
+    res.json(error);
+  }
+});
+
+router.post("/movonics/unbounce", async (req, res) => {
+  try {
+    const { token_type, access_token } = await refreshAccessToken("movonics");
+    console.log(access_token);
+    console.log(req.body);
+    req.body.pageVariant = undefined;
+    req.body.pageId = undefined;
+    console.log(req.body);
+    return;
+    const response = await axios.post(
+      urls.AddLeadUrl,
+      {
+        data: [
+          {
+            ...req.body,
+            Lead_Status: "New Lead",
+          },
+        ],
+      },
+      {
+        headers: {
+          Authorization: `${token_type} ${access_token}`,
+        },
+      }
+    );
+    console.log(response.data);
+
+    const repsonseMessage =
+      response.data.data[0].code == "SUCCESS" ? true : false;
+
+    return res.redirect();
   } catch (error) {
     console.log(error);
     res.json(error);
