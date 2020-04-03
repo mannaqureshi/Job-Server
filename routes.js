@@ -127,18 +127,13 @@ router.post("/movonics/leads", async (req, res) => {
 });
 
 router.post("/movonics/unbounce", async (req, res) => {
-  delete req.body.pageVariant;
-  delete req.body.pageId;
-  console.log(req.body);
-  return;
   try {
     const { token_type, access_token } = await refreshAccessToken("movonics");
     console.log(access_token);
-
-    req.body.pageVariant = undefined;
-    req.body.pageId = undefined;
+    delete req.body.pageVariant;
+    delete req.body.pageId;
     console.log(req.body);
-    return;
+
     const response = await axios.post(
       urls.AddLeadUrl,
       {
@@ -156,14 +151,12 @@ router.post("/movonics/unbounce", async (req, res) => {
       }
     );
     console.log(response.data);
-
     const repsonseMessage =
       response.data.data[0].code == "SUCCESS" ? true : false;
-
-    return res.redirect();
+    return res.status(200).redirect(`https://www.movonics.com/thankyou`);
   } catch (error) {
     console.log(error);
-    res.json(error);
+    return res.status(302).redirect(`https://www.movonics.com/Error`);
   }
 });
 module.exports = router;
