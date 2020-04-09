@@ -1,0 +1,26 @@
+[
+  {
+    "from": "Lahore",
+    "to": "Karachi",
+    "items": [
+      {
+        "name": "shehroz truck",
+        "withoutPacking": "43776",
+        "partialPacking": "5616",
+        "completePacking": "6048"
+      }
+    ]
+  },
+  {
+    "from": "Lahore",
+    "to": "Karachi",
+    "items": [
+      {
+        "name": "shehroz truck",
+        "withoutPacking": "43776",
+        "partialPacking": "5616",
+        "completePacking": "6048"
+      }
+    ]
+  }
+]

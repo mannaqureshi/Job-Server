@@ -3,9 +3,10 @@ const qs = require("querystring");
 const urls = require("./urls");
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
 const storage = path.join(__dirname, "../", "tokens.json");
 
-module.exports.getAccessTokenFromCode = company => {
+module.exports.getAccessTokenFromCode = (company) => {
   let id = process.env[`${company}_client_id`];
   let secret = process.env[`${company}_client_secret`];
   let code = process.env[`${company}_code`];
@@ -19,12 +20,12 @@ module.exports.getAccessTokenFromCode = company => {
           client_id: id,
           client_secret: secret,
           code,
-          grant_type: "authorization_code"
+          grant_type: "authorization_code",
         }),
         {
           headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-          }
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
         }
       );
       if (response.data.error) {
@@ -37,7 +38,7 @@ module.exports.getAccessTokenFromCode = company => {
   });
 };
 
-module.exports.refreshAccessToken = company => {
+module.exports.refreshAccessToken = (company) => {
   const credentials = JSON.parse(fs.readFileSync(storage));
   let id = process.env[`${company}_client_id`];
   let secret = process.env[`${company}_client_secret`];
@@ -49,8 +50,8 @@ module.exports.refreshAccessToken = company => {
           refresh_token: credentials.movonics.refresh_token,
           client_id: id,
           client_secret: secret,
-          grant_type: `refresh_token`
-        }
+          grant_type: `refresh_token`,
+        },
       });
       if (response.data.error) {
         reject(response.data.error);
