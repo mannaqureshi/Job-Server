@@ -243,7 +243,7 @@ router.post("/payments/initiate", async (req, res) => {
 
     const hashedRequest = aes.encText(queryParams, `RFIIU606DPUOUUB8`);
     console.log(queryParams, hashedRequest);
-    // 2077566000001660111
+    // invoice number = 2077566000001660111
 
     const response = await axios.post(
       `https://easypay.easypaisa.com.pk/easypay/Index.jsf`,
