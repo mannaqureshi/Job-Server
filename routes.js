@@ -229,35 +229,27 @@ router.post("/payments/initiate", async (req, res) => {
 
     const params = {
       amount,
-      autoRedirect: 0,
+      autoRedirect: 1,
       orderRefNum: invoice_number,
-      // paymentMethod: "CC_PAYMENT_METHOD",
+      paymentMethod: "CC_PAYMENT_METHOD",
       postBackURL: `http://localhost:5000/api/payments/firstHandler`,
-      storeId: "9813",
+      storeId: "49572",
     };
 
     let queryParams = Object.keys(params).reduce((acc, key) => {
       return (acc += `${key}=${params[key]}&`);
     }, ``);
     queryParams = queryParams.substr(0, queryParams.length - 1);
-    console.log(queryParams);
-    console.log(
-      aes.encText(queryParams, `LGPL1103O1MJ947U`, null, "base64", "base64")
-    );
 
+    const hashedRequest = aes.encText(queryParams, `RFIIU606DPUOUUB8`);
+    console.log(queryParams, hashedRequest);
     // 2077566000001660111
 
     const response = await axios.post(
       `https://easypay.easypaisa.com.pk/easypay/Index.jsf`,
       qs.stringify({
         ...params,
-        merchantHashedReq: aes.encText(
-          queryParams,
-          `LGPL1103O1MJ947U`,
-          null,
-          "base64",
-          "base64"
-        ),
+        merchantHashedReq: hashedRequest,
       }),
       {
         headers: {
@@ -265,9 +257,9 @@ router.post("/payments/initiate", async (req, res) => {
         },
       }
     );
-    console.log(response.data);
+    // console.log(response.data);
 
-    res.json({ ...response.data });
+    res.contentType("html").send(response.data);
   } catch (error) {
     console.log("Error");
     return res.json({ message: error, success: false });
